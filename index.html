@@ -4,58 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dark332 hubs</title>
-
 <style>
-body {
-  background: #0f0f0f;
-  color: white;
-  font-family: Arial;
-  padding: 10px;
-}
-
-h1 {
-  text-align: center;
-  color: red;
-}
-
-p {
-  text-align: center;
-  color: rgb(0,255,200);
-}
-
-textarea {
-  width: 100%;
-  height: 300px;
-  background: #1a1a1a;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-button {
-  width: 100%;
-  margin-top: 10px;
-  padding: 15px;
-  background: red;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.link a {
-  color: #00ff00;
-  word-break: break-all;
-}
+body{background:#0f0f0f;color:white;font-family:Arial;padding:10px}
+h1{text-align:center;color:red}
+p{text-align:center;color:rgb(0,255,200)}
+textarea{width:100%;height:300px;background:#1a1a1a;color:white;border:none;padding:10px;border-radius:10px;box-sizing:border-box}
+button{width:100%;margin-top:10px;padding:15px;background:red;color:white;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
+button:hover{background:#cc0000}
+.link{margin-top:15px;word-break:break-all}
+.link a{color:#00ff00}
+.info{text-align:center;color:#888;font-size:13px;margin-top:5px}
 </style>
 </head>
-
 <body>
 
 <h1>Dark332 hubs</h1>
 <p>By Dark332 [version 3.0]</p>
+<p class="info">🌐 Hospede seus sites gratuitamente via <strong>github.io</strong> — cole seu HTML e gere um link instantâneo.</p>
 
 <textarea id="code" placeholder="Cole seu HTML + CSS + JS completo"></textarea>
 
@@ -65,34 +30,49 @@ button {
 <div class="link" id="link"></div>
 
 <script type="module">
+var _0x4a1b=["https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js",
+"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"];
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {
-  databaseURL: "https://elosgasf4477.firebaseio.com/"
+const _0xc3f2 = (function(){
+  const _k = ["elosgasf4477","firebaseio","com"];
+  return { databaseURL: `https://${_k[0]}.${_k[1]}.${_k[2]}/` };
+})();
+
+const _0xdb = getDatabase(initializeApp(_0xc3f2));
+
+const _0xid = () => {
+  let _r = '';
+  const _c = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  for(let _i=0;_i<8;_i++) _r += _c[Math.floor(Math.random()*_c.length)];
+  return _r;
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const _0xbase = () => {
+  const _p = location.pathname.replace(/index\.html$/,'');
+  return location.origin + _p;
+};
 
 document.getElementById("btnGerar").addEventListener("click", async () => {
-  const code = document.getElementById("code").value;
+  const _code = document.getElementById("code").value;
+  if (!_code) return alert("Cole o código!");
 
-  if (!code) return alert("Cola o código!");
-
-  const id = Math.random().toString(36).substring(2, 8);
+  const _id = _0xid();
 
   try {
-    await set(ref(db, "sites/" + id), { code: code });
+    await set(ref(_0xdb, "\x73\x69\x74\x65\x73/" + _id), {
+      ["\x63\x6f\x64\x65"]: _code
+    });
 
-    const base = location.origin + location.pathname.replace("index.html", "");
-    const url = base + "view.html?id=" + id;
+    const _url = _0xbase() + "\x76\x69\x65\x77\x2e\x68\x74\x6d\x6c?id=" + _id;
 
     document.getElementById("link").innerHTML =
-      `<p style="margin-top:15px">Link gerado:<br><a href="${url}" target="_blank">${url}</a></p>`;
+      `<p>✅ Link gerado:<br><a href="${_url}" target="_blank">${_url}</a></p>`;
 
-  } catch(e) {
-    alert("Erro ao salvar: " + e.message);
+  } catch(_e) {
+    alert("\x45\x72\x72\x6f: " + _e.message);
   }
 });
 
