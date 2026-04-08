@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  databaseURL: "https://elosgasf4477.firebaseio.com/"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const id = new URLSearchParams(location.search).get("id");
+
+if (!id) {
+  document.body.innerText = "Link inválido";
+} else {
+  try {
+    const snap = await get(ref(db, "sites/" + id));
+
+    if (!snap.exists()) {
+      document.body.innerText = "Não encontrado";
+    } else {
+      document.open();
+      document.write(snap.val().code);
+      document.close();
+    }
+  } catch {
+    document.body.innerText = "Erro ao carregar";
+  }
+}
+</script>
+
+</body>
+</html>
