@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta charset="UTF-8">
+</head>
 <body>
 
 <script type="module">
@@ -22,14 +25,14 @@ if (!id) {
     const snap = await get(ref(db, "sites/" + id));
 
     if (!snap.exists()) {
-      document.body.innerText = "Não encontrado";
+      document.body.innerText = "Site não encontrado";
     } else {
       document.open();
       document.write(snap.val().code);
       document.close();
     }
-  } catch {
-    document.body.innerText = "Erro ao carregar";
+  } catch(e) {
+    document.body.innerText = "Erro ao carregar: " + e.message;
   }
 }
 </script>
