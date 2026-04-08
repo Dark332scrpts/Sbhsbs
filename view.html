@@ -2,37 +2,104 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Eruda carrega antes de tudo -->
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+  eruda.init();
+
+  // Protege contra document.write destruir o Eruda
+  const _origWrite = document.write.bind(document);
+  document.write = function(...args) {
+    _origWrite(...args);
+    setTimeout(() => {
+      if (!document.getElementById('eruda')) {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/eruda';
+        s.onload = () => eruda.init();
+        document.documentElement.appendChild(s);
+      }
+    }, 300);
+  };
+
+  // Bloqueia remoção do Eruda via JS
+  const _origRemove = Element.prototype.remove;
+  Element.prototype.remove = function () {
+    if (this.id === 'eruda') return;
+    return _origRemove.apply(this, arguments);
+  };
+
+  const _origRemoveChild = Node.prototype.removeChild;
+  Node.prototype.removeChild = function (child) {
+    if (child && child.id === 'eruda') return child;
+    return _origRemoveChild.apply(this, arguments);
+  };
+
+  // Keepalive — reinjecta se sumir
+  setInterval(() => {
+    if (!document.getElementById('eruda')) {
+      try { eruda.init(); } catch(e) {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/eruda';
+        s.onload = () => eruda.init();
+        document.documentElement.appendChild(s);
+      }
+    }
+  }, 2000);
+</script>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; }
+#loading {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:#0f0f0f; color:white; display:flex;
+  align-items:center; justify-content:center;
+  font-family:Arial; font-size:18px; z-index:9998;
+}
+#eruda {
+  z-index: 2147483647 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+</style>
 </head>
 <body>
+
+<div id="loading">⏳ Carregando...</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {
-  databaseURL: "https://elosgasf4477.firebaseio.com/"
-};
+const _0xcfg = (()=>{
+  const _k=["elosgasf4477","firebaseio","com"];
+  return { databaseURL:`https://${_k[0]}.${_k[1]}.${_k[2]}/` };
+})();
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const _0xdb = getDatabase(initializeApp(_0xcfg));
+const _0xid = new URLSearchParams(location.search).get("\x69\x64");
+const _0xloading = document.getElementById("loading");
 
-const id = new URLSearchParams(location.search).get("id");
-
-if (!id) {
-  document.body.innerText = "Link inválido";
+if (!_0xid) {
+  _0xloading.innerHTML = "❌ Link inválido";
 } else {
   try {
-    const snap = await get(ref(db, "sites/" + id));
+    const _0xsnap = await get(ref(_0xdb, "\x73\x69\x74\x65\x73/" + _0xid));
 
-    if (!snap.exists()) {
-      document.body.innerText = "Site não encontrado";
+    if (!_0xsnap.exists()) {
+      _0xloading.innerHTML = "❌ Site não encontrado";
     } else {
+      const _0xcode = _0xsnap.val()["\x63\x6f\x64\x65"];
+
       document.open();
-      document.write(snap.val().code);
+      document.write(_0xcode);
       document.close();
     }
-  } catch(e) {
-    document.body.innerText = "Erro ao carregar: " + e.message;
+  } catch(_e) {
+    _0xloading.innerHTML = "❌ Erro: " + _e.message;
   }
 }
 </script>
