@@ -42,6 +42,7 @@ button {
   border: none;
   border-radius: 10px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .link a {
@@ -58,8 +59,8 @@ button {
 
 <textarea id="code" placeholder="Cole seu HTML + CSS + JS completo"></textarea>
 
-<button onclick="gerar()">Gerar Link</button>
-<button onclick="limpar()">Limpar</button>
+<button id="btnGerar">Gerar Link</button>
+<button id="btnLimpar">Limpar</button>
 
 <div class="link" id="link"></div>
 
@@ -74,27 +75,31 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-window.gerar = async function() {
+document.getElementById("btnGerar").addEventListener("click", async () => {
   const code = document.getElementById("code").value;
 
   if (!code) return alert("Cola o código!");
 
   const id = Math.random().toString(36).substring(2, 8);
 
-  await set(ref(db, "sites/" + id), {
-    code: code
-  });
+  try {
+    await set(ref(db, "sites/" + id), { code: code });
 
-  const url = location.origin + location.pathname.replace("index.html","") + "view.html?id=" + id;
+    const base = location.origin + location.pathname.replace("index.html", "");
+    const url = base + "view.html?id=" + id;
 
-  document.getElementById("link").innerHTML =
-    `<a href="${url}" target="_blank">${url}</a>`;
-};
+    document.getElementById("link").innerHTML =
+      `<p style="margin-top:15px">Link gerado:<br><a href="${url}" target="_blank">${url}</a></p>`;
 
-window.limpar = function() {
+  } catch(e) {
+    alert("Erro ao salvar: " + e.message);
+  }
+});
+
+document.getElementById("btnLimpar").addEventListener("click", () => {
   document.getElementById("code").value = "";
   document.getElementById("link").innerHTML = "";
-};
+});
 </script>
 
 </body>
